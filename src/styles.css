@@ -1,40 +1,40 @@
 body {
-    font-family: Arial, sans-serif;
-    background: #0f172a;
-    color: white;
-    margin: 0;
-  }
-  
-  .app {
-    text-align: center;
-    padding: 40px;
-  }
-  
-  .search input {
-    padding: 10px;
-    width: 200px;
-    margin-right: 10px;
-  }
-  
-  .search button,
-  .toggle {
-    padding: 10px 16px;
-    cursor: pointer;
-  }
-  
-  .card {
-    margin: 30px auto;
-    padding: 20px;
-    width: 250px;
-    background: #1e293b;
-    border-radius: 12px;
-  }
-  
-  .temp {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  
-  .error {
-    color: #f87171;
-  }
+  font-family: Arial, sans-serif;
+  background: #e0f7fa;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.app {
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.search-bar input {
+  padding: 8px;
+  width: 60%;
+  margin-right: 5px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+}
+
+.toggle-unit button {
+  margin: 10px 0;
+  padding: 5px 10px;
+}
+
+.recent-searches ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recent-searches li {
+  display: inline-block;
+  margin: 5px;
+  cursor: pointer;
+  color: #00796b;
+  text-decoration: underline;
+}

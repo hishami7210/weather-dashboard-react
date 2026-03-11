@@ -1,54 +1,70 @@
-import { useState } from "react";
-import SearchBar from "./components/SearchBar";
+import React, { useState, useEffect } from "react";
 import WeatherCard from "./components/WeatherCard";
+import SearchBar from "./components/SearchBar";
+import ToggleUnit from "./components/ToggleUnit";
 
-const API_KEY = "3edaffdad91e48aac3b6f2925f788ba8";
+const API_KEY = "3edaffdad91e48aac3b6f2925f788ba8"; // replace with your key
 
-export default function App() {
-  const [weather, setWeather] = useState(null);
-  const [unit, setUnit] = useState("imperial");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+function App() {
+  const [weatherData, setWeatherData] = useState(null);
+  const [unit, setUnit] = useState("imperial"); // "imperial" = °F, "metric" = °C
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [lastCity, setLastCity] = useState("");
 
   const fetchWeather = async (city) => {
     try {
-      setLoading(true);
-      setError("");
-
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=${unit}`
       );
-
-      if (!res.ok) throw new Error("City not found");
-
       const data = await res.json();
-      setWeather(data);
+
+      if (data.cod !== 200) {
+        alert("City not found");
+        return;
+      }
+
+      setWeatherData(data);
+      setLastCity(city);
+
+      setRecentSearches((prev) => {
+        const updated = [city, ...prev.filter((c) => c !== city)];
+        return updated.slice(0, 5);
+      });
     } catch (err) {
-      setError(err.message);
-      setWeather(null);
-    } finally {
-      setLoading(false);
+      console.error(err);
+      alert("Error fetching weather");
     }
   };
 
-  const toggleUnit = () => {
-    setUnit((prev) => (prev === "imperial" ? "metric" : "imperial"));
-    if (weather) fetchWeather(weather.name);
-  };
+  // Re-fetch last city when unit changes
+  useEffect(() => {
+    if (lastCity) fetchWeather(lastCity);
+  }, [unit]);
 
   return (
     <div className="app">
       <h1>Weather Dashboard</h1>
 
       <SearchBar onSearch={fetchWeather} />
+      <ToggleUnit unit={unit} setUnit={setUnit} />
 
-      <button className="toggle" onClick={toggleUnit}>
-        Switch to {unit === "imperial" ? "°C" : "°F"}
-      </button>
+      {recentSearches.length > 0 && (
+        <div className="recent-searches">
+          <h3>Recent Searches:</h3>
+          <ul>
+            {recentSearches.map((city) => (
+              <li key={city} onClick={() => fetchWeather(city)}>
+                {city}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="error">{error}</p>}
-      {weather && <WeatherCard data={weather} unit={unit} />}
+      {/* Pass the unit prop */}
+      {weatherData && <WeatherCard weather={weatherData} unit={unit} />}
     </div>
   );
 }
+
+export default App;
